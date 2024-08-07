@@ -1,2 +1,110 @@
 # Supply-chain-analysis-in-tableau-
-In this case study I built a shipment and inventory dashboard to assist with tracking key metrics affecting the business such as shipment delay, % of delayed orders, calculating over and understock for various product categories. I went further to summarize my findings with a data story where I conveyed the key takeaways of my analysis
+In this case study I built a **shipment and inventory dashboard** to assist with tracking key metrics affecting the business such as shipment delay, % of delayed orders, calculating over and understock for various product categories. I went further to summarize my findings with a data story where I conveyed the key takeaways of my analysis. You can view the full report [here](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/supply%20chain%20analysis%20report.pdf) or download the Tableau file [here](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/supply_chain_analysis.twbx).
+
+### DELIVERABLES
+*	**Shipment dashboard**: Reporting major shipment KPIs (% of delayed orders & shipment delays(days)) and investigating the evolution of these shipment KPIs.
+*	**Inventory dashboard**: Visualizing supply and demand, then providing an interactive exploration tool per product category
+*	**Data story**: A short data story summarizing my findings.
+
+### DATASET AND DATA MODEL
+I started by getting an in depth understanding of the tables provided namely:
+1.	**Inventory table**: containing information about products, current stock and price per unit monthly.
+2.	**Orders & shipments table**: This table contains product, warehouse, customer & shipment information for each order made. 
+3.	**Fulfilment table**: the table provides information about the time on average it takes in days to restock each product.
+
+| **Table name**    | **Column name**                     | **description**                                                                            |
+|-------------------|-------------------------------------|--------------------------------------------------------------------------------------------|
+| Orders & shipment | `Order id`                          | Unique order identification                                                                |
+| Orders & shipment | `Order item id`                     | Unique Order Item identification. Order Item always belong to just one Order               |
+| Orders & shipment | `Order year`                        | Year of the order                                                                          |
+| Orders & shipment | `Order month`                       | Month of the order                                                                         |
+| Orders & shipment | `Order day`                         | Day of the order                                                                           |
+| Orders & shipment | `Order time`                        | Timestamp of the order in UTC                                                              |
+| Orders & shipment | `Order Quantity`                    | The amount of a product that was ordered within a given order (1 record of the data)       |
+| Orders & shipment | `Product categories`                | Product grouping into categories                                                           |
+| Orders & shipment | `Product name`                      | Name of the purchased product                                                              |
+| Orders & shipment | `Customer id`                       | Unique Customer identification                                                             |
+| Orders & shipment | `Customer market`                   | Grouping of customer country e.g. LATAM, Pacific Asia, EUROPE.                             |
+| Orders & shipment | `Customer region`                   | Grouping of customer country e.g. Northern Europe, Western Europe.                         |
+| Orders & shipment | `Customer country`                  | Customer’s country                                                                         |
+| Orders & shipment | `Warehouse country`                 | Country of warehouse that fulfilled the order                                              |
+| Orders & shipment | `Shipment year`                     | Shipment year for the order                                                                |
+| Orders & shipment | `Shipment month`                    | Shipment month for the order                                                               |
+| Orders & shipment | `Shipment day`                      | Shipment day for the order                                                                 |
+| Orders & shipment | `Shipment mode`                     | Category of shipment dispatch e.g. standard, first & second class                          |
+| Orders & shipment | `Shipment days- scheduled`          | Typical number of days needed for dispatch of order                                        |
+| Orders & shipment | `Gross sales`                       | Revenue before discount generated by sales for the item (1 record of the data)             |
+| Orders & shipment | `Discount %`                        | Discount % applied on the catalog price                                                    |
+| Orders & shipment | `Profit`                            | Profit generated by the sales of the Order Item (1 record of data)                         |
+| Inventory         | `Warehouse inventory`               | The monthly level of a product e.g 30 units                                                |
+| Inventory         | `Inventory cost per unit`           | The monthly storage cost per unit                                                          |
+| Fulfilment        | `Warehouse order fulfilment (days)` | The average number of days it takes to restock a particular product if it drops below zero |
+
+
+With an in depth understanding of the data, I proceeded to connect all relevant datasets into a data model in Tableau, creating the correct relationships and cardinality between the tables and related columns. I corrected datatype mismatches then classified the columns into dimensions and measures.   
+
+![data model](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/data_model.png)
+
+### DATA EXPLORATION & VISUALIZATIONS
+I explored the quantity of orders by presenting its evolution on a monthly basis, then created a calculated column to combine the order date fields using the MAKEDATE() function and then by using a trend line I was able to observe a sharp drop in order quantity from September 2017, that continued to December 2017, this could have be occasioned by multiple factors like missing data, customer dissatisfaction, inventory issues etc.
+
+![visualizing order](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/visualizing_orders.png)
+
+
+I proceeded to look at shipments, as this is a critical element in our supply chain, to see if our business suffered from delayed shipments. Using the shipment days scheduled and the shipment days actual that was gotten by subtracting the prior from the order date, I created a new metric shipment delay which split all orders into four categories 
+* Before schedule
+*	On schedule
+*	Delay up to 5 days
+*	Delay over 5 days
+
+  
+![shipment_delay](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/shipment_delay.png)
+
+I then visualized the monthly evolution of the summed order quantity split into the shipment delay categories.
+![shipment_delay](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/investigating_shipments.png)
+
+Although the overall proportion of the delayed shipments is decreasing, we still have quite a percentage of them, with a delay peak in October 2017. 
+Noticing this trend, it became necessary to build two KPI’s to monitor this delay namely Average shipment delay and % of delayed orders.
+
+![delayed orders](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/delayed_orders.png)
+![percentage of delayed orders](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/perc_delayed_orders.png)
+![avg_shipment_delay](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/avg_shipment_delay.png)
+
+It was also necessary to know if this KPI’s were increasing or decreasing over time, and if it was particular to some markets i.e. last mile inefficiencies, two visualizations delay evolution & markets with delays were used to present these findings.
+
+![delay evolution](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/delay_evolution.png)
+![markets](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/markets_with_delay.png)
+
+Looking at the map, it seems that in majority of countries over 50% of orders arrive on or before schedule, on closer observation it was also noticed that in European countries like Estonia, Sweden & Finland had a larger proportion of delayed shipments compared to other countries. These findings should help in discussions between the company and its logistics partners.
+
+ 
+### Inventory management
+Inventory Management can be challenging, it is necessary to maximize stock, this concept is known as Just in time(NO UNDERSTOCK OR OVERSTOCK) to avoid delayed shipments, storage costs & user dissatisfaction etc, three visualizations were developed to monitor inventory levels closely on an overall and monthly average basis, I also showed the warehouse order fulfilment time alongside the understock visualization
+
+![inventory](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/inventory_levels.png)
+![overstock](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/overstock.png)
+![understock](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/understock.png)
+
+
+It was be observed that cleats have a high average monthly overstock which leads to a higher storage cost for the product category, on the opposite spectrum indoor and outdoor games are largely understocked, more information on supply and demand of the products categories for optimized inventory management.
+Using inventory as our supply metric and order quantity as demand, we visualize the supply vs demand with a line of best fit to monitor product categories.
+
+
+![demand_supply](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/supply_and_demand.png)
+
+Confirming what we have seen earlier in the overstock visualization, Product category Cleats supply exceeds its demand greatly and needs to be optimized.
+To solve these inefficiencies, I created a monitoring visualization to track the inventory levels for products monthly, with a dynamic selection tool to select the Top N products and a quick highlighter for product categories.
+
+![stock_levels](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/stock_levels.png)
+
+### DASHBOARD AND STORY
+Finally, I assemble my Shipment and Inventory dashboard, selecting the most insightful visualizations and KPI’s that reinforce the message, I also made the dashboards interactive using filters and dashboard actions so that the end users can dig deeper into the visualizations, I also presented a summary of insights gained with a short data story.
+
+![shipment_dashboard](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/shipment_dashboard.png)
+![inventory_dashboard](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/inventory_dashboard.png)
+![storypg1](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/story_pg1.png)
+![storyp2](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/story_pg2.png)
+
+Click the link below to view the completed tool:
+
+View full report in pdf [HERE](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/supply%20chain%20analysis%20report.pdf) or download the Tableau file [HERE](https://github.com/Tamuno-omi/Supply-chain-analysis-in-tableau-/blob/main/supply_chain_analysis.twbx)
